@@ -1,31 +1,31 @@
 // File: api/server.js
 
+// 👇 Ye setting time limit ko 10s se badha kar 60s kar degi
 export const config = {
-    runtime: 'edge', // Code ko fast banata hai
+    maxDuration: 60, 
 };
 
-export default async function handler(req) {
+export default async function handler(req, res) {
     // 1. Sirf POST request accept karein
     if (req.method !== 'POST') {
-        return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
+        return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
         // 2. User ke computer se PROMPT receive karein
-        const { prompt } = await req.json();
+        const { prompt } = req.body; // Note: Node.js me req.body hota hai
 
         // 3. Vercel ke safe locker se API Key nikalein
-        // (Ye key code me nahi likhi hai, ye Vercel settings se aayegi)
         const API_KEY = process.env.GEMINI_API_KEY;
 
         if (!API_KEY) {
-            return new Response(JSON.stringify({ error: 'Server Error: API Key missing' }), { status: 500 });
+            return res.status(500).json({ error: 'Server Error: API Key missing' });
         }
 
         // 4. Google Gemini API URL
         const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
-        // 5. Naya Prompt Structure banayein
+        // 5. Naya Prompt Structure
         const finalPrompt = `
         You are an expert developer. Generate a JSON array of files.
         Response format: [{"filename": "string", "code": "string"}]
@@ -42,12 +42,9 @@ export default async function handler(req) {
         const data = await googleResponse.json();
 
         // 7. Result wapis user ko bhejein
-        return new Response(JSON.stringify(data), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' }
-        });
+        res.status(200).json(data);
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+        res.status(500).json({ error: error.message });
     }
 }
