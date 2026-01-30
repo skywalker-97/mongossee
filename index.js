@@ -7,7 +7,7 @@ const { hideBin } = require('yargs/helpers');
 
 // 👇 IMP: Yahan apni Vercel App ka link daalna hoga (Deploy karne ke baad milega)
 // Filhal ye placeholder rakhein, baad me edit karke update kar dena.
-const SERVER_URL = "https://AAPKA-PROJECT-NAME.vercel.app/api/server";
+const SERVER_URL = "https://mongossee.vercel.app/api/server";
 
 
 /**
