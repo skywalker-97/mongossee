@@ -46,23 +46,39 @@ async function generateProject(prompt, directoryName) {
         const data = await response.json();
         let responseText = data.candidates[0].content.parts[0].text;
 
-        // --- NEW JSON PARSING & FILE CREATION LOGIC ---
-       // console.log("Building project...");
+        // --- 2. UPDATED SMART JSON PARSING (Ye naya hissa hai) ---
+        
+        // Code start '[' aur end ']' dhoondho taaki faltu text ignore ho jaye
+        const jsonStartIndex = responseText.indexOf('[');
+        const jsonEndIndex = responseText.lastIndexOf(']');
 
-        // Clean up potential markdown fences from the AI's response
-        if (responseText.startsWith("```json")) {
-            responseText = responseText.substring(7, responseText.length - 3).trim();
+        if (jsonStartIndex === -1 || jsonEndIndex === -1) {
+            console.error("❌ ERROR: AI response me Valid JSON nahi mila.");
+            console.log("Raw Response:", responseText);
+            return;
         }
+
+        // Sirf kaam ka JSON hissa nikalo
+        let cleanJson = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
 
         let files;
         try {
-            files = JSON.parse(responseText);
-            if (!Array.isArray(files)) throw new Error("AI did not return a JSON array.");
+            files = JSON.parse(cleanJson);
         } catch (parseError) {
-            console.error("❌ ERROR: Failed to parse the AI's response. The response was not valid JSON.");
-            console.error("Raw AI Response:", responseText);
-            return;
+            // Agar normal parse fail ho, to control characters hata kar try karo
+            try {
+                cleanJson = cleanJson.replace(/[\u0000-\u0019]+/g, ""); 
+                files = JSON.parse(cleanJson);
+            } catch (retryError) {
+                console.error("❌ Parsing Failed. Raw Response niche dekhein:");
+                console.log(responseText);
+                return;
+            }
         }
+
+        if (!Array.isArray(files)) throw new Error("AI did not return a JSON array.");
+
+        // --- FILE CREATION LOGIC ---
 
         // Create the main project directory
         fs.mkdirSync(directoryName, { recursive: true });
