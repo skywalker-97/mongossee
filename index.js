@@ -21,8 +21,10 @@ async function generateProject(prompt, directoryName) {
     // Note: 'newPrompt' wala logic ab Server (api/server.js) ke paas hai,
     // isliye yahan se hata diya taki code simple rahe.
 
+    // ⚠️ CHANGE: Humne prompt me strict instruction add kar di hai
+    // taaki AI response me comments na bheje.
     const body = {
-        prompt: prompt // Sirf user ka prompt bhej rahe hain
+        prompt: prompt + " . IMPORTANT: Return strictly code only. Do not include any comments, docstrings, or explanations inside the code files." 
     };
 
     try {
