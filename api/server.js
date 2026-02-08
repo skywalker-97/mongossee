@@ -50,7 +50,7 @@ export default async function handler(req, res) {
             // 👇 Temperature 0.1 (Taaki AI creative na bane, sirf accurate code likhe)
             generationConfig: {
                 temperature: 0.1,
-                maxOutputTokens: 5000
+                maxOutputTokens: 8192
             }
         };
 
