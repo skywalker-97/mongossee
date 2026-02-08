@@ -19,16 +19,19 @@ export default async function handler(req, res) {
         // 2. Advanced System Prompt (Strict Rules)
         // api/server.js
 
+// api/server.js ke andar
+
 const finalPrompt = `
-ACT AS: Senior Node.js Architect.
-TASK: Generate a production-ready project structure for: "${prompt}".
+ACT AS: Senior Software Architect.
+TASK: Generate a production-ready project structure based on the user request: "${prompt}".
 
 STRICT RESPONSE RULES:
-1. Return ONLY a valid JSON array.
-2. JSON Format: [{"filename": "string", "code": "string"}]
-3. 'package.json' MUST be included with all dependencies.
-4. Use ES6 Modules (import/export).
-5. ⛔ NO COMMENTS ALLOWED: Do not include ANY comments (// or /* */) in the code. Return only pure executable code.
+1. Detect the programming language from the request (e.g., Java, Python, C++, Node.js).
+2. Return ONLY a valid JSON array. Format: [{"filename": "string", "code": "string"}]
+3. If it's a Node.js project, include 'package.json'.
+4. If it's Java/Python/C++, provide appropriate file extensions (e.g., Main.java, script.py).
+5. ⛔ NO COMMENTS ALLOWED: Do not include ANY comments (// or /* */) in the code.
+6. Return ONLY JSON. No markdown formatting.
 
 OUTPUT JSON ONLY:
 `;
