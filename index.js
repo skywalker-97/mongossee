@@ -5,8 +5,7 @@ const path = require('path'); // Node.js Path module
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
-// 👇 IMP: Yahan apni Vercel App ka link daalna hoga (Deploy karne ke baad milega)
-// Filhal ye placeholder rakhein, baad me edit karke update kar dena.
+
 const SERVER_URL = "https://mongossee.vercel.app/api/server";
 
 
@@ -17,12 +16,7 @@ const SERVER_URL = "https://mongossee.vercel.app/api/server";
  */
 async function generateProject(prompt, directoryName) {
   
-// ⚠️ CHANGE 3: Hum ab Google ko nahi, apne Server ko call kar rahe hain
-    // Note: 'newPrompt' wala logic ab Server (api/server.js) ke paas hai,
-    // isliye yahan se hata diya taki code simple rahe.
 
-    // ⚠️ CHANGE: Humne prompt me strict instruction add kar di hai
-    // taaki AI response me comments na bheje.
     const body = {
         prompt: prompt + " . IMPORTANT: Return strictly code only. Do not include any comments, docstrings, or explanations inside the code files." 
     };
@@ -58,14 +52,14 @@ async function generateProject(prompt, directoryName) {
             return;
         }
 
-        // Sirf kaam ka JSON hissa nikalo
+        
         let cleanJson = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
 
         let files;
         try {
             files = JSON.parse(cleanJson);
         } catch (parseError) {
-            // Agar normal parse fail ho, to control characters hata kar try karo
+           
             try {
                 cleanJson = cleanJson.replace(/[\u0000-\u0019]+/g, ""); 
                 files = JSON.parse(cleanJson);
@@ -109,7 +103,7 @@ async function generateProject(prompt, directoryName) {
 // --- NEW YARGS SETUP ---
 yargs(hideBin(process.argv))
     .command(
-        '$0 <prompt>', // The default command
+        '$0 <prompt>', 
         'Generates a full project structure from a text prompt.',
         (yargs) => {
             return yargs
@@ -117,11 +111,11 @@ yargs(hideBin(process.argv))
                     describe: 'The project you want to generate',
                     type: 'string',
                 })
-                .option('directory', { // Replaces the old 'output' flag
+                .option('directory', { 
                     alias: 'd',
                     describe: 'The name of the new directory to create the project in',
                     type: 'string',
-                    demandOption: true, // This flag is now required
+                    demandOption: true, 
                 });
         },
         (argv) => {

@@ -1,4 +1,4 @@
-// File: api/server.js
+
 
 // 👇 Ye setting time limit ko 10s se badha kar 60s kar degi
 export const config = {
@@ -6,33 +6,36 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-    // 1. Sirf POST request accept karein
+    
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
-        // 2. User ke computer se PROMPT receive karein
-        const { prompt } = req.body; // Note: Node.js me req.body hota hai
+       
+        const { prompt } = req.body; 
 
-        // 3. Vercel ke safe locker se API Key nikalein
         const API_KEY = process.env.GEMINI_API_KEY;
 
         if (!API_KEY) {
             return res.status(500).json({ error: 'Server Error: API Key missing' });
         }
 
-        // 4. Google Gemini API URL
+        
         const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
-        // 5. Naya Prompt Structure
+        
         const finalPrompt = `
-        You are an expert developer. Generate a JSON array of files.
-        Response format: [{"filename": "string", "code": "string"}]
-        User Prompt: "${prompt}"
-        `;
+You are a Senior Full Stack Developer.  <-- (Role: Senior Dev)
+Your task is to generate a production-ready Node.js project based on this request: "${prompt}"
 
-        // 6. Google ko request bhejein
+RULES:
+1. Return ONLY a valid JSON array. <-- (Format: Sirf code, no chat)
+2. Always include 'package.json'.    <-- (Standard: Dependencies zaroori hain)
+3. Code must be modern (ES6+).       <-- (Quality: Naya code)
+`;
+
+       
         const googleResponse = await fetch(googleUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
