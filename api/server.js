@@ -1,53 +1,79 @@
-
-
-// 👇 Ye setting time limit ko 10s se badha kar 60s kar degi
 export const config = {
-    maxDuration: 60, 
+    maxDuration: 60, // 1 Minute Timeout
 };
 
 export default async function handler(req, res) {
-    
+    // 1. Method Check
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
-       
-        const { prompt } = req.body; 
-
+        const { prompt } = req.body;
         const API_KEY = process.env.GEMINI_API_KEY;
 
         if (!API_KEY) {
-            return res.status(500).json({ error: 'Server Error: API Key missing' });
+            throw new Error('Server Error: API Key missing');
         }
 
-        
-        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        // 2. Advanced System Prompt (Strict Rules)
+        // api/server.js
 
-        
-        const finalPrompt = `
-You are a Senior Full Stack Developer.  <-- (Role: Senior Dev)
-Your task is to generate a production-ready Node.js project based on this request: "${prompt}"
+const finalPrompt = `
+ACT AS: Senior Node.js Architect.
+TASK: Generate a production-ready project structure for: "${prompt}".
 
-RULES:
-1. Return ONLY a valid JSON array. <-- (Format: Sirf code, no chat)
-2. Always include 'package.json'.    <-- (Standard: Dependencies zaroori hain)
-3. Code must be modern (ES6+).       <-- (Quality: Naya code)
+STRICT RESPONSE RULES:
+1. Return ONLY a valid JSON array.
+2. JSON Format: [{"filename": "string", "code": "string"}]
+3. 'package.json' MUST be included with all dependencies.
+4. Use ES6 Modules (import/export).
+5. ⛔ NO COMMENTS ALLOWED: Do not include ANY comments (// or /* */) in the code. Return only pure executable code.
+
+OUTPUT JSON ONLY:
 `;
 
-       
-        const googleResponse = await fetch(googleUrl, {
+        // 3. Call Google API with "generationConfig" (Temperature Control)
+        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        
+        const response = await fetch(googleUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] })
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: finalPrompt }] }],
+                generationConfig: {
+                    temperature: 0.1, // ❄️ Low temp = More accurate code, less hallucination
+                    maxOutputTokens: 5000 // Allow long code response
+                }
+            })
         });
 
-        const data = await googleResponse.json();
+        const data = await response.json();
 
-        // 7. Result wapis user ko bhejein
-        res.status(200).json(data);
+        // 4. Server-Side Cleaning (Safayi Abhiyan) 🧹
+        if (!data.candidates || !data.candidates[0].content) {
+            throw new Error("AI ne khali jawab diya.");
+        }
+
+        let rawText = data.candidates[0].content.parts[0].text;
+
+        // Remove Markdown (```json ... ```)
+        const cleanJson = rawText.replace(/```json|```/g, '').trim();
+
+        // 5. Validation (Check karo ki JSON valid hai ya nahi)
+        try {
+            const parsedFiles = JSON.parse(cleanJson);
+            
+            // Agar sab sahi hai, to DIRECT Files array bhejo (Google ka kachra format nahi)
+            return res.status(200).json({ success: true, files: parsedFiles });
+
+        } catch (jsonError) {
+            console.error("JSON Parse Error:", rawText); // Log for debugging
+            return res.status(500).json({ error: "AI generated invalid JSON code. Please try again." });
+        }
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 }
