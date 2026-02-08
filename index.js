@@ -30,47 +30,26 @@ async function generateProject(prompt, directoryName) {
             body: JSON.stringify(body),
         });
 
-        if (!response.ok) {
-            // Agar server down hai ya error hai
-            const errorText = await response.text();
-            console.error('❌ Server Error:', response.status, errorText);
-            throw new Error(`Server request failed with status ${response.status}`);
-        }
-
         const data = await response.json();
-        let responseText = data.candidates[0].content.parts[0].text;
 
-        // --- 2. UPDATED SMART JSON PARSING (Ye naya hissa hai) ---
-        
-        // Code start '[' aur end ']' dhoondho taaki faltu text ignore ho jaye
-        const jsonStartIndex = responseText.indexOf('[');
-        const jsonEndIndex = responseText.lastIndexOf(']');
-
-        if (jsonStartIndex === -1 || jsonEndIndex === -1) {
-            console.error("❌ ERROR: AI response me Valid JSON nahi mila.");
-            console.log("Raw Response:", responseText);
-            return;
-        }
-
-        
-        let cleanJson = responseText.substring(jsonStartIndex, jsonEndIndex + 1);
-
-        let files;
-        try {
-            files = JSON.parse(cleanJson);
-        } catch (parseError) {
-           
-            try {
-                cleanJson = cleanJson.replace(/[\u0000-\u0019]+/g, ""); 
-                files = JSON.parse(cleanJson);
-            } catch (retryError) {
-                console.error("❌ Parsing Failed. Raw Response niche dekhein:");
-                console.log(responseText);
-                return;
+        // 1. Check Server Success
+        // Ab server khud bata dega ki success hua ya fail
+        if (!response.ok || !data.success) {
+            const errorMessage = data.error || 'Unknown Server Error';
+            console.error(`\n❌ Server Error: ${errorMessage}`);
+            if (data.raw_response) {
+                console.log("Raw Output (Debug):", data.raw_response);
             }
+            return; // Stop here
         }
 
-        if (!Array.isArray(files)) throw new Error("AI did not return a JSON array.");
+        // 2. Get Files Directly (No Parsing Needed)
+        // Server ne saaf-suthra array bheja hai
+        const files = data.files;
+
+        if (!Array.isArray(files)) {
+            throw new Error("Invalid response format: 'files' is not an array.");
+        }
 
         // --- FILE CREATION LOGIC ---
 

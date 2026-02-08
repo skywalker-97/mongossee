@@ -1,9 +1,12 @@
+// File: api/server.js
+
+// 👇 1. Timeout badhaya (Heavy projects ke liye)
 export const config = {
-    maxDuration: 60, // 1 Minute Timeout
+    maxDuration: 60, 
 };
 
 export default async function handler(req, res) {
-    // 1. Method Check
+    // 2. Method Check
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
@@ -13,70 +16,86 @@ export default async function handler(req, res) {
         const API_KEY = process.env.GEMINI_API_KEY;
 
         if (!API_KEY) {
-            throw new Error('Server Error: API Key missing');
+            console.error("Server Error: API Key missing");
+            return res.status(500).json({ error: 'Server Environment Check Failed: API Key missing' });
         }
 
-        // 2. Advanced System Prompt (Strict Rules)
-        // api/server.js
+        // 3. Advanced Prompt Engineering
+        const finalPrompt = `
+        ACT AS: Senior Software Architect.
+        TASK: Create a production-ready coding project for: "${prompt}".
 
-// api/server.js ke andar
+        STRICT RULES:
+        1. Detect language (Java, Python, Node.js, etc.) automatically.
+        2. Return ONLY a valid JSON array: [{"filename": "string", "code": "string"}]
+        3. If Node.js: include 'package.json'. If Java: use 'Main.java'.
+        4. ⛔ NO COMMENTS: Do not include // or /* */ lines.
+        5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
 
-const finalPrompt = `
-ACT AS: Senior Software Architect.
-TASK: Generate a production-ready project structure based on the user request: "${prompt}".
+        OUTPUT JSON ONLY:
+        `;
 
-STRICT RESPONSE RULES:
-1. Detect the programming language from the request (e.g., Java, Python, C++, Node.js).
-2. Return ONLY a valid JSON array. Format: [{"filename": "string", "code": "string"}]
-3. If it's a Node.js project, include 'package.json'.
-4. If it's Java/Python/C++, provide appropriate file extensions (e.g., Main.java, script.py).
-5. ⛔ NO COMMENTS ALLOWED: Do not include ANY comments (// or /* */) in the code.
-6. Return ONLY JSON. No markdown formatting.
-
-OUTPUT JSON ONLY:
-`;
-
-        // 3. Call Google API with "generationConfig" (Temperature Control)
         const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
         
-        const response = await fetch(googleUrl, {
+        // 4. Advanced Configuration (Ye hai asli Magic ✨)
+        const requestBody = {
+            contents: [{ parts: [{ text: finalPrompt }] }],
+            // 👇 Safety Filters OFF (Taaki Java/C++ code block na ho)
+            safetySettings: [
+                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+            ],
+            // 👇 Temperature 0.1 (Taaki AI creative na bane, sirf accurate code likhe)
+            generationConfig: {
+                temperature: 0.1,
+                maxOutputTokens: 5000
+            }
+        };
+
+        const googleResponse = await fetch(googleUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: finalPrompt }] }],
-                generationConfig: {
-                    temperature: 0.1, // ❄️ Low temp = More accurate code, less hallucination
-                    maxOutputTokens: 5000 // Allow long code response
-                }
-            })
+            body: JSON.stringify(requestBody)
         });
 
-        const data = await response.json();
+        const data = await googleResponse.json();
 
-        // 4. Server-Side Cleaning (Safayi Abhiyan) 🧹
+        // 5. Error Handling (Agar Google ne block kiya)
+        if (data.error) {
+            throw new Error(`Google API Error: ${data.error.message}`);
+        }
         if (!data.candidates || !data.candidates[0].content) {
-            throw new Error("AI ne khali jawab diya.");
+            throw new Error("AI ne response block kar diya (Safety Filter Triggered).");
         }
 
+        // 6. Server-Side Cleaning (Safayi Abhiyan 🧹)
         let rawText = data.candidates[0].content.parts[0].text;
-
-        // Remove Markdown (```json ... ```)
+        
+        // Markdown hatana (```json ... ```)
         const cleanJson = rawText.replace(/```json|```/g, '').trim();
 
-        // 5. Validation (Check karo ki JSON valid hai ya nahi)
+        // 7. Validation (Check karo JSON sahi hai ya nahi)
         try {
             const parsedFiles = JSON.parse(cleanJson);
             
-            // Agar sab sahi hai, to DIRECT Files array bhejo (Google ka kachra format nahi)
-            return res.status(200).json({ success: true, files: parsedFiles });
+            // ✅ SUCCESS: Clean data bhejo
+            return res.status(200).json({ 
+                success: true, 
+                files: parsedFiles 
+            });
 
         } catch (jsonError) {
-            console.error("JSON Parse Error:", rawText); // Log for debugging
-            return res.status(500).json({ error: "AI generated invalid JSON code. Please try again." });
+            console.error("JSON Parse Fail:", rawText);
+            return res.status(500).json({ 
+                error: "AI generated invalid JSON. Please try again.",
+                raw_response: rawText 
+            });
         }
 
     } catch (error) {
-        console.error(error);
+        console.error("Server Crash Log:", error.message);
         res.status(500).json({ error: error.message });
     }
 }
