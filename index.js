@@ -115,6 +115,18 @@ async function generateProject(prompt, directoryName) {
                         
                 }
 
+                // 2. ✨ JSON Pretty-Print Fix:
+                // Agar file .json hai, toh usey dubara parse karke sundar format mein badlo
+                if (file.filename.endsWith('.json')) {
+                    try {
+                        const jsonObject = JSON.parse(formattedCode);
+                        formattedCode = JSON.stringify(jsonObject, null, 2);
+                    } catch (e) {
+                        // Agar parse fail ho jaye toh purana formatted code hi rehne do
+                        //console.log(` ${file.filename}`);
+                    }
+                }
+
             // Write the code to the file
             fs.writeFileSync(filePath, formattedCode);
             //console.log(`Created file: ${filePath}`);
