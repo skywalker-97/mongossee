@@ -27,24 +27,25 @@ async function generateProject(prompt, directoryName) {
             - If it mentions React/Components, use React (JSX/TSX).
             - For DSA/Logic, choose Java, Python, or C++ based on context.
         2. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State.
-        3. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
+        3. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
+        4. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts). 
+        5. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
+        6. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
 
-        4. ❌ REMOVE FALTU STUFF: Do NOT include @testing-library, web-vitals, or eslintConfig.
-        5. 🧠 SMART LOGIC: If the prompt says "Logic", "Algorithm", or "DSA", generate only the core logic without UI or framework code
-        6. 🧱 COMPONENT STRUCTURE: If the prompt mentions "component", "ui", or "frontend", build a complete component with proper imports, exports, and structure.
+        7. 🧠 SMART LOGIC: If the prompt says "Logic", "Algorithm", or "DSA", generate only the core logic without UI or framework code
+        8. 🧱 COMPONENT STRUCTURE: If the prompt mentions "component", "ui", or "frontend", build a complete component with proper imports, exports, and structure.
 
-        7. ⛔ ZERO COMMENTS: Return strictly functional code. No // or /* */ comments, and no explanations.
+        9. ⛔ ZERO COMMENTS: Return strictly functional code. No // or /* */ comments, and no explanations.
 
-        8. 📁 ARCHITECTURE: If the prompt mentions Parent/Child or Props, strictly follow React best practices (state in parent, props to child, arrow functions for events).
+        10. 📁 ARCHITECTURE: If the prompt mentions Parent/Child or Props, strictly follow React best practices (state in parent, props to child, arrow functions for events).
 
-        9. 📄 FORMAT: Return ONLY a valid JSON array of objects: [{"filename": "string", "code": "string"}]. 
+        11. 📄 FORMAT: Return ONLY a valid JSON array of objects: [{"filename": "string", "code": "string"}]. 
         
-        10. 🚫 NO MARKDOWN: Do not wrap the response in \`\`\`json blocks.
-        11. 🧹 CLEAN CODE: Ensure the 'code' string has proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file. Single-line code is not acceptable.
-        12. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
-        13. 🛠️ BOILERPLATE: Include all necessary boilerplate files (e.g. package.json for Node.js, pom.xml for Java, etc.) based on the detected language and framework.
-        14. 🧩 FILE STRUCTURE: If the prompt implies multiple files (e.g. "Create a React app with components"), generate a structured file hierarchy with appropriate imports/exports.
-        15. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
+        12. 🚫 NO MARKDOWN: Do not wrap the response in \`\`\`json blocks.
+        13. 🧹 CLEAN CODE: Ensure the 'code' string has proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file. Single-line code is not acceptable.
+        14. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
+        15. 🛠️ BOILERPLATE: Include all necessary boilerplate files (e.g. package.json for Node.js, pom.xml for Java, etc.) based on the detected language and framework.
+        16. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
         `
     };
 
@@ -106,13 +107,13 @@ async function generateProject(prompt, directoryName) {
 
             if (typeof formattedCode === 'string') {
                     formattedCode = formattedCode
-                        .replace(/\\\\/g, '\\')  // Double backslash ko single banaya
-                        .replace(/\\r/g, '')     // Carriage returns hatao
-                        .replace(/\\n/g, '\n')   // Double backslash ko newline banao
-                        .replace(/\\t/g, '  ')   // Tabs ko spaces banao
-                        .replace(/\\"/g, '"')   // Escaped quotes ko sahi karo
-                        .replace(/\\\\"/g, '"'); // Agar AI ne code ko ek single line mein diya hai, toh usko pretty-print karne ki koshish karo
-                        
+                        .replace(/\\\\"/g, '"')    // 1. Triple escaped quotes (\\") pehle
+                        .replace(/\\"/g, '"')      // 2. Normal escaped quotes (\")
+                        .replace(/\\r/g, '')       // 3. Carriage returns hatao
+                        .replace(/\\n/g, '\n')     // 4. Newlines (Actual line breaks) ko restore karo 🚀
+                        .replace(/\\t/g, '  ')     // 5. Tabs ko 2 spaces banao
+                        .replace(/\\{2,}/g, '\\')  // 6. Multiple backslashes ko handle karo
+                        .replace(/\\\\/g, '\\');   // 7. Generic backslashes last mein
                 }
 
                 // 2. ✨ JSON Pretty-Print Fix:
