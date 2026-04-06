@@ -55,7 +55,18 @@ export default async function handler(req, res) {
             generationConfig: {
                 temperature: 0.1,
                 maxOutputTokens: 8192,
-                response_mime_type: "application/json"
+                response_mime_type: "application/json",
+                response_schema: {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        filename: { type: "STRING" },
+                        code: { type: "STRING" }
+                    },
+                    required: ["filename", "code"]
+                }
+            }
             }
         };
 
