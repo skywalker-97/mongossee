@@ -28,7 +28,7 @@ async function generateProject(prompt, directoryName) {
             - For DSA/Logic, choose Java, Python, or C++ based on context.
         3. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State. No "any" type.
         4. ⛔ NO EXTRA BLOAT: In package.json, include ONLY strictly necessary dependencies (e.g., react, react-dom, react-scripts). 
-        5. ❌ REMOVE FALTU STUFF: Do NOT include @testing-library, web-vitals, or eslintConfig. I want a clean, minimal package.json.
+        5. ❌ REMOVE FALTU STUFF: Do NOT include @testing-library, web-vitals, or eslintConfig.
         6. ⛔ ZERO COMMENTS: Return strictly functional code. No // or /* */ comments, and no explanations.
         7. 📁 ARCHITECTURE: If the prompt mentions Parent/Child or Props, strictly follow React best practices (state in parent, props to child, arrow functions for events).
         8. 📄 FORMAT: Return ONLY a valid JSON array of objects: [{"filename": "string", "code": "string"}]. 
@@ -91,7 +91,16 @@ async function generateProject(prompt, directoryName) {
                 fs.mkdirSync(fileDir, { recursive: true });
             }
 
-            const formattedCode = file.code.replace(/\\n/g, '\n');
+            let formattedCode = file.code;
+
+            if (typeof formattedCode === 'string') {
+                    formattedCode = formattedCode
+                        .replace(/\\\\/g, '\\')  // Double backslash ko single banaya
+                        .replace(/\\r/g, '')     // Carriage returns hatao
+                        .replace(/\\n/g, '\n')   // Double backslash ko newline banao
+                        .replace(/\\t/g, '  ')   // Tabs ko spaces banao
+                        .replace(/\\"/g, '"');   // Escaped quotes ko sahi karo
+                }
 
             // Write the code to the file
             fs.writeFileSync(filePath, formattedCode);
