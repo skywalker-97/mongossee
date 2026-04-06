@@ -35,6 +35,8 @@ export default async function handler(req, res) {
         4. ⛔ NO COMMENTS: Do not include // or /* */ lines.
         5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
         6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
+        7. If prompt implies multiple files, create a proper file structure with correct imports/exports.
+        
 
         IMPORTANT: The 'code' string must include proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file.
         
