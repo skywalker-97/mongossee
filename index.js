@@ -33,6 +33,7 @@ async function generateProject(prompt, directoryName) {
         7. 📁 ARCHITECTURE: If the prompt mentions Parent/Child or Props, strictly follow React best practices (state in parent, props to child, arrow functions for events).
         8. 📄 FORMAT: Return ONLY a valid JSON array of objects: [{"filename": "string", "code": "string"}]. 
         9. 🚫 NO MARKDOWN: Do not wrap the response in \`\`\`json blocks.
+        10. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
         `
     };
 
@@ -90,8 +91,10 @@ async function generateProject(prompt, directoryName) {
                 fs.mkdirSync(fileDir, { recursive: true });
             }
 
+            const formattedCode = file.code.replace(/\\n/g, '\n');
+
             // Write the code to the file
-            fs.writeFileSync(filePath, file.code);
+            fs.writeFileSync(filePath, formattedCode);
             //console.log(`Created file: ${filePath}`);
         }
 

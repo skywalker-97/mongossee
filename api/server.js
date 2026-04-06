@@ -65,8 +65,8 @@ export default async function handler(req, res) {
                         properties: {
                             filename: { type: "STRING" },
                             code: { 
-                                type: "STRING",
-                                description: "The full source code of the file with proper indentation and newlines." // ✨ Ye line help karegi
+                                type: "STRING", 
+                                description: "CRITICAL: Full source code. Use ACTUAL newlines (\\n) and 2-space indentation. DO NOT return a single-line string. Every statement must be on a new line." 
                             }
                         },
                         required: ["filename", "code"]
