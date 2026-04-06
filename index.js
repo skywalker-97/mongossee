@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path'); 
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-const { execSync } = require('child_process');
 
 
 const SERVER_URL = "https://mongossee.vercel.app/api/server";
@@ -19,8 +18,23 @@ async function generateProject(prompt, directoryName) {
   
 
     const body = {
-    prompt: prompt + " . IMPORTANT: Return strictly functional code only. ⛔ NO COMMENTS: Do not include any comments (//, /* */, #, or docstrings) or explanations inside the code files. Ensure the 'code' field contains proper indentation and newlines (\\n) so it's readable. Do not wrap in markdown code blocks." 
-};
+        prompt: `
+        TASK: Generate a coding project based on this user request: "${prompt}"
+        
+        STRICT TECHNICAL CONSTRAINTS (Follow for every project):
+        1. AUTO-DETECT LANGUAGE & TECH: 
+            - If the request mentions "Typescript" or ".ts/.tsx", use TypeScript strictly.
+            - If it mentions React/Components, use React (JSX/TSX).
+            - For DSA/Logic, choose Java, Python, or C++ based on context.
+        3. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State. No "any" type.
+        4. ⛔ NO EXTRA BLOAT: In package.json, include ONLY strictly necessary dependencies (e.g., react, react-dom, react-scripts). 
+        5. ❌ REMOVE FALTU STUFF: Do NOT include @testing-library, web-vitals, or eslintConfig. I want a clean, minimal package.json.
+        6. ⛔ ZERO COMMENTS: Return strictly functional code. No // or /* */ comments, and no explanations.
+        7. 📁 ARCHITECTURE: If the prompt mentions Parent/Child or Props, strictly follow React best practices (state in parent, props to child, arrow functions for events).
+        8. 📄 FORMAT: Return ONLY a valid JSON array of objects: [{"filename": "string", "code": "string"}]. 
+        9. 🚫 NO MARKDOWN: Do not wrap the response in \`\`\`json blocks.
+        `
+    };
 
     try {
         console.log(`Code Running in Expresss`);
@@ -79,23 +93,6 @@ async function generateProject(prompt, directoryName) {
             // Write the code to the file
             fs.writeFileSync(filePath, file.code);
             //console.log(`Created file: ${filePath}`);
-        }
-
-        const hasPackageJson = files.some(file => file.filename === 'package.json');
-
-
-        if (hasPackageJson) {
-            console.log(`📦 package.json detected. Installing dependencies...`);
-            try {
-                // Folder ke andar jaakar npm install chalao
-                execSync('npm install', { 
-                    cwd: directoryName, 
-                    stdio: 'inherit' // Taaki installation progress dikhe
-                });
-                console.log(`\n✅ All dependencies installed!`);
-            } catch (err) {
-                console.error(`\n⚠️ NPM Install failed. Please run 'npm install' manually inside "${directoryName}".`);
-            }
         }
 
        // console.log(`\n Project "${directoryName}" created successfully!`);

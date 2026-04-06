@@ -37,7 +37,7 @@ export default async function handler(req, res) {
         6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
 
         IMPORTANT: The 'code' string must include proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file.
-
+        
         OUTPUT JSON ONLY:
         `;
 
