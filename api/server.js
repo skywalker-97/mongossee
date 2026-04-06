@@ -25,12 +25,16 @@ export default async function handler(req, res) {
         ACT AS: Senior Software Architect.
         TASK: Create a production-ready coding project for: "${prompt}".
 
+        RETURN A JSON ARRAY OF OBJECTS:
+        [{"filename": "string", "code": "string"}]
+
         STRICT RULES:
         1. Detect language (Java, Python, Node.js, etc.) automatically.
         2. Return ONLY a valid JSON array: [{"filename": "string", "code": "string"}]
         3. If Node.js: include 'package.json'. If Java: use 'Main.java'.
         4. ⛔ NO COMMENTS: Do not include // or /* */ lines.
         5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
+        6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.)
 
         OUTPUT JSON ONLY:
         `;
@@ -50,7 +54,8 @@ export default async function handler(req, res) {
             // 👇 Temperature 0.1 (Taaki AI creative na bane, sirf accurate code likhe)
             generationConfig: {
                 temperature: 0.1,
-                maxOutputTokens: 8192
+                maxOutputTokens: 8192,
+                response_mime_type: "application/json"
             }
         };
 
@@ -71,14 +76,15 @@ export default async function handler(req, res) {
         }
 
         // 6. Server-Side Cleaning (Safayi Abhiyan 🧹)
-        let rawText = data.candidates[0].content.parts[0].text;
+       // let rawText = data.candidates[0].content.parts[0].text;
         
         // Markdown hatana (```json ... ```)
-        const cleanJson = rawText.replace(/```json|```/g, '').trim();
+       // const cleanJson = rawText.replace(/```json|```/g, '').trim();
 
         // 7. Validation (Check karo JSON sahi hai ya nahi)
         try {
-            const parsedFiles = JSON.parse(cleanJson);
+            const rawText = data.candidates[0].content.parts[0].text;
+            const parsedFiles = JSON.parse(rawText);
             
             // ✅ SUCCESS: Clean data bhejo
             return res.status(200).json({ 
@@ -87,10 +93,10 @@ export default async function handler(req, res) {
             });
 
         } catch (jsonError) {
-            console.error("JSON Parse Fail:", rawText);
+            console.error("JSON Parse Fail:", data.candidates[0].content.parts[0].text);
             return res.status(500).json({ 
                 error: "AI generated invalid JSON. Please try again.",
-                raw_response: rawText 
+                raw_response: data.candidates[0].content.parts[0].text
             });
         }
 

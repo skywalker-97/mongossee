@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require('fs'); // Node.js File System
-const path = require('path'); // Node.js Path module
+const fs = require('fs'); 
+const path = require('path'); 
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
+const { execSync } = require('child_process');
 
 
 const SERVER_URL = "https://mongossee.vercel.app/api/server";
@@ -33,7 +34,7 @@ async function generateProject(prompt, directoryName) {
         const data = await response.json();
 
         // 1. Check Server Success
-        // Ab server khud bata dega ki success hua ya fail
+        
         if (!response.ok || !data.success) {
             const errorMessage = data.error || 'Unknown Server Error';
             console.error(`\n❌ Server Error: ${errorMessage}`);
@@ -44,7 +45,7 @@ async function generateProject(prompt, directoryName) {
         }
 
         // 2. Get Files Directly (No Parsing Needed)
-        // Server ne saaf-suthra array bheja hai
+        
         const files = data.files;
 
         if (!Array.isArray(files)) {
@@ -72,10 +73,27 @@ async function generateProject(prompt, directoryName) {
             //console.log(`Created file: ${filePath}`);
         }
 
-       // console.log(`\n🎉 Project "${directoryName}" created successfully!`);
+        const hasPackageJson = files.some(file => file.filename === 'package.json');
+        
+
+        if (hasPackageJson) {
+            console.log(`📦 package.json detected. Installing dependencies...`);
+            try {
+                // Folder ke andar jaakar npm install chalao
+                execSync('npm install', { 
+                    cwd: directoryName, 
+                    stdio: 'inherit' // Taaki installation progress dikhe
+                });
+                console.log(`\n✅ All dependencies installed!`);
+            } catch (err) {
+                console.error(`\n⚠️ NPM Install failed. Please run 'npm install' manually inside "${directoryName}".`);
+            }
+        }
+
+       // console.log(`\n Project "${directoryName}" created successfully!`);
 
     } catch (error) {
-        console.error('❌ An error occurred:', error.message);
+        console.error(' An error occurred:', error.message);
     }
 }
 
