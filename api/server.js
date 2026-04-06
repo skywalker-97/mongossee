@@ -34,7 +34,9 @@ export default async function handler(req, res) {
         3. If Node.js: include 'package.json'. If Java: use 'Main.java'.
         4. ⛔ NO COMMENTS: Do not include // or /* */ lines.
         5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
-        6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.)
+        6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
+
+        IMPORTANT: The 'code' string must include proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file.
 
         OUTPUT JSON ONLY:
         `;
@@ -57,16 +59,19 @@ export default async function handler(req, res) {
                 maxOutputTokens: 8192,
                 response_mime_type: "application/json",
                 response_schema: {
-                type: "ARRAY",
-                items: {
-                    type: "OBJECT",
-                    properties: {
-                        filename: { type: "STRING" },
-                        code: { type: "STRING" }
-                    },
-                    required: ["filename", "code"]
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            filename: { type: "STRING" },
+                            code: { 
+                                type: "STRING",
+                                description: "The full source code of the file with proper indentation and newlines." // ✨ Ye line help karegi
+                            }
+                        },
+                        required: ["filename", "code"]
+                    }
                 }
-            }
             }
         };
 

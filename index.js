@@ -19,8 +19,8 @@ async function generateProject(prompt, directoryName) {
   
 
     const body = {
-        prompt: prompt + " . IMPORTANT: Return strictly code only. Do not include any comments, docstrings, or explanations inside the code files." 
-    };
+    prompt: prompt + " . IMPORTANT: Return strictly functional code only. ⛔ NO COMMENTS: Do not include any comments (//, /* */, #, or docstrings) or explanations inside the code files. Ensure the 'code' field contains proper indentation and newlines (\\n) so it's readable. Do not wrap in markdown code blocks." 
+};
 
     try {
         console.log(`Code Running in Expresss`);
@@ -39,7 +39,15 @@ async function generateProject(prompt, directoryName) {
             const errorMessage = data.error || 'Unknown Server Error';
             console.error(`\n❌ Server Error: ${errorMessage}`);
             if (data.raw_response) {
-                console.log("Raw Output (Debug):", data.raw_response);
+                console.log("Raw Output (Debug):");
+                try {
+                    // AI ka response agar markdown mein ho toh clean karke parse karein
+                    const cleanRaw = data.raw_response.replace(/```json|```/g, "").trim();
+                    const prettyJson = JSON.stringify(JSON.parse(cleanRaw), null, 2);
+                    console.log(prettyJson);
+                } catch (e) {
+                    console.log("Raw Response:", data.raw_response);
+                }
             }
             return; // Stop here
         }
@@ -74,7 +82,7 @@ async function generateProject(prompt, directoryName) {
         }
 
         const hasPackageJson = files.some(file => file.filename === 'package.json');
-        
+
 
         if (hasPackageJson) {
             console.log(`📦 package.json detected. Installing dependencies...`);
