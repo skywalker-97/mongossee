@@ -9,6 +9,7 @@ const { hideBin } = require('yargs/helpers');
 const SERVER_URL = "https://mongossee.vercel.app/api/server";
 
 
+
 /**
  * Generates a full project structure based on a prompt.
  * @param {string} prompt - The user's project request.
@@ -17,36 +18,8 @@ const SERVER_URL = "https://mongossee.vercel.app/api/server";
 async function generateProject(prompt, directoryName) {
   
 
-    const body = {
-        prompt: `
-        TASK: Generate a coding project based on this user request: "${prompt}"
-        
-        STRICT TECHNICAL CONSTRAINTS (Follow for every project):
-        1. AUTO-DETECT LANGUAGE & TECH: 
-            - If the request mentions "Typescript" or ".ts/.tsx", use TypeScript strictly.
-            - If it mentions React/Components, use React (JSX/TSX).
-            - For DSA/Logic, choose Java, Python, or C++ based on context.
-        2. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State.
-        3. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
-        4. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts). 
-        5. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
-        6. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
-
-        7. 🧠 SMART LOGIC: If the prompt says "Logic", "Algorithm", or "DSA", generate only the core logic without UI or framework code
-        8. 🧱 COMPONENT STRUCTURE: If the prompt mentions "component", "ui", or "frontend", build a complete component with proper imports, exports, and structure.
-
-        9. ⛔ ZERO COMMENTS: Return strictly functional code. No // or /* */ comments, and no explanations.
-
-        10. 📁 ARCHITECTURE: If the prompt mentions Parent/Child or Props, strictly follow React best practices (state in parent, props to child, arrow functions for events).
-
-        11. 📄 FORMAT: Return ONLY a valid JSON array of objects: [{"filename": "string", "code": "string"}]. 
-        
-        12. 🚫 NO MARKDOWN: Do not wrap the response in \`\`\`json blocks.
-        13. 🧹 CLEAN CODE: Ensure the 'code' string has proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file. Single-line code is not acceptable.
-        14. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
-        15. 🛠️ BOILERPLATE: Include all necessary boilerplate files (e.g. package.json for Node.js, pom.xml for Java, etc.) based on the detected language and framework.
-        16. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
-        `
+        const body = {
+        prompt: prompt // Ye wahi prompt hai jo user terminal mein likhega
     };
 
     try {
@@ -64,16 +37,16 @@ async function generateProject(prompt, directoryName) {
         
         if (!response.ok || !data.success) {
             const errorMessage = data.error || 'Unknown Server Error';
-            console.error(`\n❌ Server Error: ${errorMessage}`);
+            console.error(`\n Server Error: ${errorMessage}`);
             if (data.raw_response) {
-                console.log("Raw Output (Debug):");
+               // console.log("Raw Output (Debug):");
                 try {
                     // AI ka response agar markdown mein ho toh clean karke parse karein
                     const cleanRaw = data.raw_response.replace(/```json|```/g, "").trim();
                     const prettyJson = JSON.stringify(JSON.parse(cleanRaw), null, 2);
                     console.log(prettyJson);
                 } catch (e) {
-                    console.log("Raw Response:", data.raw_response);
+                    //console.log("Raw Response:", data.raw_response);
                 }
             }
             return; // Stop here
