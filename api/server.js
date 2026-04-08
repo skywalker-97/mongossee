@@ -51,7 +51,8 @@ export default async function handler(req, res) {
         5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
         6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
         7. If prompt implies multiple files, create a proper file structure with correct imports/exports.
-        8. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts). 
+        8. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts).
+              CRITICAL: If the user request implies TypeScript (.ts/.tsx),  you MUST include "@types/react" and "@types/react-dom" in devDependencies.
         9. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
         10. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
         12. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
