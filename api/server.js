@@ -20,10 +20,20 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Server Environment Check Failed: API Key missing' });
         }
 
+
+        const cleanUserPrompt = prompt
+            .replace(/@"/g, '')           // PowerShell multiline start hatao
+            .replace(/"@/g, '')           // PowerShell multiline end hatao
+            .replace(/>>/g, '')           // Terminal redirection symbols hatao
+            .replace(/␦/g, '')            // Ajeeb symbols jo copy-paste se aate hain
+            .replace(/\r?\n|\r/g, ' ')    // Newlines ko spaces mein badlo taaki AI confuse na ho
+            .replace(/\s+/g, ' ')         // Double spaces ko single space banao
+            .trim();
+
         // 3. Advanced Prompt Engineering
         const finalPrompt = `
         ACT AS: Senior Software Architect.
-        TASK: Create a production-ready coding project for: "${prompt}".
+        TASK: Create a production-ready coding project for: "${cleanUserPrompt}".
 
         RETURN A JSON ARRAY OF OBJECTS:
         [{"filename": "string", "code": "string"}]
@@ -44,7 +54,6 @@ export default async function handler(req, res) {
         8. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts). 
         9. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
         10. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
-        11. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
         12. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
         13. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
         14. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
@@ -55,7 +64,7 @@ export default async function handler(req, res) {
         OUTPUT JSON ONLY:
         `;
 
-        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key=${API_KEY}`;
         
         // 4. Advanced Configuration (Ye hai asli Magic ✨)
         const requestBody = {
