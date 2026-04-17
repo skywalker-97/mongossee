@@ -39,6 +39,11 @@ export default async function handler(req, res) {
         [{"filename": "string", "code": "string"}]
 
         STRICT RULES:
+
+        TARGETED OUTPUT: 
+            - If the user asks for a specific logic, algorithm, or interface in TypeScript (without mentioning 'React', 'Frontend', or 'UI'), return ONLY pure TypeScript files (.ts). 
+            - DO NOT include React components, HTML, or CSS unless explicitly requested.
+            - For Pure TS/Node tasks, include a minimal package.json and a tsconfig.json.
         
         1. AUTO-DETECT LANGUAGE & TECH: 
             - If the request mentions "Typescript" or ".ts/.tsx", use TypeScript strictly.
@@ -66,7 +71,7 @@ export default async function handler(req, res) {
         OUTPUT JSON ONLY:
         `;
 
-        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
         
         // 4. Advanced Configuration (Ye hai asli Magic ✨)
         const requestBody = {
