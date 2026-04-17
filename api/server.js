@@ -39,29 +39,26 @@ export default async function handler(req, res) {
         [{"filename": "string", "code": "string"}]
 
         STRICT RULES:
-        1. 🎯 TARGETED OUTPUT: 
-            - If the user asks for a specific logic, algorithm, or interface in TypeScript (without mentioning 'React', 'Frontend', or 'UI'), return ONLY pure TypeScript files (.ts). 
-            - DO NOT include React components, HTML, or CSS unless explicitly requested.
-            - For Pure TS/Node tasks, include a minimal package.json and a tsconfig.json.
-        2. AUTO-DETECT LANGUAGE & TECH: 
+        
+        1. AUTO-DETECT LANGUAGE & TECH: 
             - If the request mentions "Typescript" or ".ts/.tsx", use TypeScript strictly.
             - If it mentions React/Components, use React (JSX/TSX).
             - For DSA/Logic, choose Java, Python, or C++ based on context.
-        3. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State.
+        2. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State.
 
-        4. Return ONLY a valid JSON array: [{"filename": "string", "code": "string"}]
+        3. Return ONLY a valid JSON array: [{"filename": "string", "code": "string"}]
 
-        5. ⛔ NO COMMENTS: Do not include // or /* */ lines.
-        6. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
-        7. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
-        8. If prompt implies multiple files, create a proper file structure with correct imports/exports.
-        9. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts).
+        4. ⛔ NO COMMENTS: Do not include // or /* */ lines.
+        5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
+        6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
+        7. If prompt implies multiple files, create a proper file structure with correct imports/exports.
+        8. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts).
               CRITICAL: If the user request implies TypeScript (.ts/.tsx),  you MUST include "@types/react" and "@types/react-dom" in devDependencies.
-        10. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
-        11. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
-        13. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
-        14. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
-        15. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
+        9. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
+        10. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
+        12. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
+        13. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
+        14. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
 
         
         IMPORTANT: The 'code' string must include proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file.
