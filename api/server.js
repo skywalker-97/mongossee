@@ -30,46 +30,147 @@ export default async function handler(req, res) {
             .replace(/\s+/g, ' ')         // Double spaces ko single space banao
             .trim();
 
-        // 3. Advanced Prompt Engineering
         const finalPrompt = `
-        ACT AS: Senior Software Architect.
-        TASK: Create a production-ready coding project for: "${cleanUserPrompt}".
+                ACT AS: Senior React/Redux Exam Solution Generator.
 
-        RETURN A JSON ARRAY OF OBJECTS:
-        [{"filename": "string", "code": "string"}]
+                TASK:
+                Create an exact implementation matching this academic coding question:
+                "${cleanUserPrompt}"
 
-        STRICT RULES:
+                RETURN FORMAT:
+                [
+                {
+                    "filename": "string",
+                    "code": "string"
+                }
+                ]
 
-        TARGETED OUTPUT: 
-            - If the user asks for a specific logic, algorithm, or interface in TypeScript (without mentioning 'React', 'Frontend', or 'UI'), return ONLY pure TypeScript files (.ts). 
-            - DO NOT include React components, HTML, or CSS unless explicitly requested.
-            - For Pure TS/Node tasks, include a minimal package.json and a tsconfig.json.
-        
-        1. AUTO-DETECT LANGUAGE & TECH: 
-            - If the request mentions "Typescript" or ".ts/.tsx", use TypeScript strictly.
-            - If it mentions React/Components, use React (JSX/TSX).
-            - For DSA/Logic, choose Java, Python, or C++ based on context.
-        2. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State.
+                STRICT RULES:
 
-        3. Return ONLY a valid JSON array: [{"filename": "string", "code": "string"}]
+                ACADEMIC MODE:
+                - Solve exactly what the question asks.
+                - Prefer minimal clean implementation over production architecture.
+                - Do NOT add enterprise patterns unless explicitly requested.
+                - For React/Redux exam questions, generate only the required slices, store, and components.
+                - Match exact scope, complexity, and technologies requested.
+                - No feature expansion.
 
-        4. ⛔ NO COMMENTS: Do not include // or /* */ lines.
-        5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
-        6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
-        7. If prompt implies multiple files, create a proper file structure with correct imports/exports.
-        8. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts).
-              CRITICAL: If the user request implies TypeScript (.ts/.tsx),  you MUST include "@types/react" and "@types/react-dom" in devDependencies.
-        9. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
-        10. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
-        12. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
-        13. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
-        14. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
+                TARGETED OUTPUT:
+                - Frontend-only request → return frontend files only
+                - Backend/API-only request → return backend files only
+                - Full-stack ONLY if explicitly requested
+                - Logic/algorithm request → return only required code files
+                - UI-related terms (forms, buttons, pages, cart, login, dashboard, navigation, components) imply frontend
+                - Include config files ONLY when required by the requested stack
 
-        
-        IMPORTANT: The 'code' string must include proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file.
-        
-        OUTPUT JSON ONLY:
-        `;
+                LANGUAGE RULES:
+                - If user explicitly says JavaScript / JS / .js / .jsx → use JavaScript ONLY
+                - If user explicitly says TypeScript / TS / .ts / .tsx → use TypeScript ONLY
+                - NEVER convert JavaScript requests into TypeScript
+                - NEVER infer TypeScript unless explicitly requested
+
+                REACT LANGUAGE RULE:
+                - React + explicit TypeScript → .tsx
+                - React + explicit JavaScript → .jsx
+                - React without language mention → default to .jsx
+
+                FRONTEND RULE:
+                - React frontend without language mention → JavaScript (.jsx)
+                - Vanilla frontend without framework mention → HTML/CSS/JS
+
+                BACKEND RULE:
+                - Backend/API without framework mention → Node.js + Express + JavaScript
+                - If framework explicitly requested, use exact framework only
+
+                DATABASE RULE:
+                - Add database ONLY if explicitly requested or clearly required
+
+                AUTH RULE:
+                - Add authentication ONLY if explicitly requested
+
+                LOGIC RULE:
+                - Logic/algorithm tasks → use explicitly requested language
+                - Otherwise default to JavaScript
+
+                REDUX RULES:
+                - If Redux Toolkit is requested:
+                - use Redux Toolkit strictly
+                - use createSlice
+                - use configureStore
+                - use useSelector/useDispatch if UI is involved
+                - do NOT replace with Context API, Zustand, MobX, or plain Redux
+                - Use synchronous reducers unless async behavior is explicitly requested
+                - Use asyncThunk / RTK Query ONLY if explicitly requested
+
+                FORMS RULE:
+                - If forms are requested:
+                - use controlled components by default
+                - use react-hook-form ONLY if explicitly requested
+
+                ROUTING RULE:
+                - Use react-router-dom ONLY if explicitly requested or clearly required
+
+                PERFORMANCE RULE:
+                - Use React.memo / useMemo / useCallback ONLY if explicitly requested
+
+                REACT RULES:
+                - Functional components only
+                - Hooks only when needed
+                - No class components unless explicitly requested
+
+                FILE STRUCTURE:
+                - Keep structure proportional to requested complexity
+                - Do NOT add extra folders
+                - Minimal clean academic structure
+
+                DEPENDENCY RULE:
+                - Include ONLY required dependencies
+                - No unnecessary libraries
+                - No testing libraries unless explicitly requested
+                - Do NOT include:
+                @testing-library/*
+                web-vitals
+                eslintConfig
+                reportWebVitals
+
+                CODE RULES:
+                - Full runnable source code only
+                - No partial snippets
+                - Include all required imports/exports
+                - STRICTLY NO COMMENTS OF ANY KIND
+                - Do NOT include:
+                // comments
+                /* block comments */
+                /** doc comments */
+                JSX comments
+                HTML comments
+                CSS comments
+                - Even a single comment is forbidden
+                - No markdown
+                - No explanations
+                - JSON output only
+
+                JSON SAFETY:
+                - Escape quotes properly
+                - Escape backslashes properly
+                - Escape newlines properly
+                - Response must be valid JSON.parse() output
+                - No text before JSON
+                - No text after JSON
+
+                EXACTNESS RULE:
+                - Redux only → do not add Context API / Zustand
+                - JavaScript → do not return TypeScript
+                - Frontend only → do not add backend
+                - Backend only → do not add frontend
+                - Synchronous logic only → do not add async code
+                - Simple academic implementation → do not over-engineer
+
+                IMPORTANT:
+                The "code" string must preserve proper indentation and escaped newlines so that writing files produces readable source code.
+
+                OUTPUT JSON ONLY.
+                `;
 
         const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
         
