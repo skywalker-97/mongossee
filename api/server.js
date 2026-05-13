@@ -33,23 +33,35 @@ export default async function handler(req, res) {
         // 3. Advanced Prompt Engineering
         const finalPrompt = `
         ACT AS: Senior Software Architect.
-        TASK: Create a production-ready coding project for: "${cleanUserPrompt}".
+        TASK: Create a coding project that matches the exact scope, complexity, and technology requirements of: "${cleanUserPrompt}".
 
         RETURN A JSON ARRAY OF OBJECTS:
         [{"filename": "string", "code": "string"}]
 
         STRICT RULES:
 
-        TARGETED OUTPUT: 
-            - If the user asks for a specific logic, algorithm, or interface in TypeScript (without mentioning 'React', 'Frontend', or 'UI'), return ONLY pure TypeScript files (.ts). 
-            - DO NOT include React components, HTML, or CSS unless explicitly requested.
-            - For Pure TS/Node tasks, include a minimal package.json and a tsconfig.json.
+        TARGETED OUTPUT:
+            - If the request is frontend-only, return only frontend files.
+            - If the request is backend/API-only, return only backend files.
+            - If the prompt explicitly requests full-stack functionality, generate frontend + backend + database as required.
+            - If the user asks for specific logic/algorithm in TypeScript without UI/frontend mention, return ONLY pure TypeScript files (.ts).
+            - If the prompt describes forms, pages, components, UI interactions, buttons, dashboards, cart, login/logout, or visual behavior, frontend/UI is clearly implied.
+            - For Node/TypeScript projects, include package.json and tsconfig.json.
         
-        1. AUTO-DETECT LANGUAGE & TECH: 
-            - If the request mentions "Typescript" or ".ts/.tsx", use TypeScript strictly.
-            - If it mentions React/Components, use React (JSX/TSX).
-            - For DSA/Logic, choose Java, Python, or C++ based on context.
-        2. TYPESCRIPT RULES: If using TypeScript, define proper Interfaces/Types for Props and State.
+        1. AUTO-DETECT LANGUAGE & TECH:
+            - Detect whether the request is frontend, backend, full-stack, API, CLI, DSA, or pure logic.
+            - If TypeScript is mentioned, use TypeScript strictly.
+            - If React is requested, use the exact requested language (.jsx or .tsx).
+            - If frontend/UI is requested without a language, choose the simplest appropriate frontend stack.
+            - If backend/API/auth/database is mentioned, use the simplest appropriate backend stack unless a specific framework is requested.
+            - If database is implied, choose PostgreSQL, MongoDB, or SQLite based on context.
+            - For authentication, use JWT/session-based auth only if required.
+            - For logic/algorithm tasks, use the explicitly requested language; otherwise choose the simplest appropriate language.
+            - If the user explicitly specifies .js/.jsx, use JavaScript strictly.
+            - If the user explicitly specifies .ts/.tsx, use TypeScript strictly.
+            
+        2. TYPESCRIPT RULES:
+            - Define proper interfaces, types, DTOs, and typings wherever appropriate.
 
         3. Return ONLY a valid JSON array: [{"filename": "string", "code": "string"}]
 
@@ -57,13 +69,34 @@ export default async function handler(req, res) {
         5. ⛔ NO MARKDOWN: Do not wrap in \`\`\`json. Return RAW JSON string only.
         6. Include all necessary boilerplate (e.g. package.json, pom.xml, etc.).
         7. If prompt implies multiple files, create a proper file structure with correct imports/exports.
-        8. 🚫 NO BLOAT: In package.json, include ONLY the absolute minimum dependencies to run the app (e.g., react, react-dom, react-scripts).
-              CRITICAL: If the user request implies TypeScript (.ts/.tsx),  you MUST include "@types/react" and "@types/react-dom" in devDependencies.
+        8. NO BLOAT:
+            - Include ONLY required dependencies.
+            - React projects: minimal frontend deps only.
+            - Backend projects: minimal server/database deps only.
+            - Full-stack projects: keep frontend/backend dependencies separated.
         9. ❌ REMOVE FALTU LIBRARIES: Strictly do NOT include @testing-library/*, web-vitals, eslintConfig, or reportWebVitals.
-        10. REACT RULES: If using React, always use functional components with hooks (useState, useEffect).
-        12. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
-        13. 🎯 CONTEXTUAL ONLY: Scrutinize the prompt. If it's a simple app, do NOT add router or state management. Only add 'react-router-dom', 'axios', etc., if the specific feature is requested.
-        14. IMPORTANT: I need 'Pretty-Printed' code. Use multi-line formatting. Single-line code is strictly forbidden.
+        10. REACT RULES:
+            - Use functional components.
+            - Use hooks only when needed.
+       
+        11. 🧑‍💻 FULL SOURCE CODE: The 'code' field must contain the complete source code for the file, including all necessary imports, exports, and boilerplate. Do not return partial code snippets.
+
+        12. 🎯 CONTEXTUAL ONLY:
+             - Do NOT add router, state management, libraries, or extra architecture unless explicitly requested or clearly required by the prompt.
+        13. IMPORTANT:
+            - The "code" field must preserve escaped newlines (\n) and indentation so that when parsed and written to a file, the source code is properly formatted.
+        14. JSON SAFETY:
+            - Escape quotes, backslashes, and newlines properly inside the "code" string.
+            - Output must be valid parseable JSON.
+        15. FILE STRUCTURE:
+            - Use realistic production-grade folder structure and naming conventions.
+        16. STRICT PROMPT ALIGNMENT:
+            - Follow the exact user requirements.
+            - Do NOT add backend, database, authentication, routing, styling frameworks, async logic, or extra architecture unless explicitly requested or clearly required.
+            - Match the requested file names, technologies, language, and complexity exactly.
+        17. LIBRARY-SPECIFIC RULES:
+            - If Redux Toolkit is requested, use Redux Toolkit strictly.
+            - Use synchronous reducers only unless async behavior is explicitly requested.
 
         
         IMPORTANT: The 'code' string must include proper indentation (spaces/tabs) and newlines so it is human-readable after being written to a file.
