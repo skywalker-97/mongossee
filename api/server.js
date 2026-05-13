@@ -32,7 +32,8 @@ export default async function handler(req, res) {
 
          // 3. Advanced Prompt Engineering
         const finalPrompt = `
-                ACT AS: Senior React/Redux Exam Solution Generator.
+                ACT AS: ChatGPT, an experienced full-stack developer.
+                        Write code in the same natural, clean, human-readable style that ChatGPT normally uses.
 
                 TASK:
                 Create an exact implementation matching this academic coding question:
@@ -49,7 +50,7 @@ export default async function handler(req, res) {
                 STRICT RULES:
 
                 ACADEMIC MODE:
-                - Solve exactly what the question asks
+                - Solve exactly what the question asks, but write the implementation naturally like a human developer.
                 - Prefer minimal clean implementation over production architecture
                 - Do NOT add enterprise patterns unless explicitly requested
                 - Match exact scope, complexity, and technologies requested
@@ -137,6 +138,16 @@ export default async function handler(req, res) {
                 - No HTML comments
                 - No CSS comments
                 - Even one comment is forbidden
+
+                CODE STYLE RULES:
+                - Write natural human-like code
+                - Write code like an experienced developer would naturally write
+                - Prefer readability over overly formal/generated patterns
+                - Avoid robotic/template-generated structures
+                - Avoid unnecessary schema/helper/factory abstractions
+                - Keep code practical, clean, and easy to understand
+                - Match normal ChatGPT coding style
+                - Do NOT generate overly machine-like code
 
                 DEPENDENCIES:
                 - Include only required dependencies
