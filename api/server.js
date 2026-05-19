@@ -160,12 +160,14 @@ export default async function handler(req, res) {
                 - Use realistic clean project structure like ChatGPT would generate
                 - Maintain correct folder hierarchy
                 - Correct imports/exports based on generated structure
-                - Append "_1413" to the end of EVERY generated filename, right before the file extension (e.g., "index_1413.js", "App_1413.tsx", "package_1413.json")
+                - Append "_1413" to the end of source code filenames, right before the file extension (e.g., "App_1413.tsx", "server_1413.js", "Navbar_1413.jsx", "socket_1413.ts")
+                - STRICTLY Do NOT append "_1413" to dependency, configuration, or entry HTML files (must be exactly "package.json", "tsconfig.json", "vite.config.ts", "index.html", ".gitignore")
                 - Simple task → minimal files
                 - Medium task → modular structure
                 - Complex/full-stack task → properly separated frontend/backend structure
                 - Do NOT create unnecessary files
                 - Do NOT omit required files
+                - For full-stack apps, filenames MUST explicitly start with the root directory name (e.g., "backend/server.js", "frontend/src/App.jsx"). Do not place server files in the root or alongside the frontend folder.
 
                 ARCHITECTURE:
                 - Follow client-server architecture concepts when relevant
