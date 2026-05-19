@@ -256,9 +256,8 @@ export default async function handler(req, res) {
                         properties: {
                             filename: { type: "STRING" },
                             code: { 
-                                type: "STRING",  
-                                description: "Full clean source code as a standard JSON-escaped string. Use escaped characters like \\n for newlines. Ensure no raw unescaped line breaks exist inside the JSON string."
-                                //"CRITICAL: Full source code. Use ACTUAL newlines (\\n) and 2-space indentation. DO NOT return a single-line string. Every statement must be on a new line."
+                                type: "STRING", 
+                                //description: "CRITICAL: Full source code. Use ACTUAL newlines (\\n) and 2-space indentation. DO NOT return a single-line string. Every statement must be on a new line." 
                             }
                         },
                         required: ["filename", "code"]
@@ -279,7 +278,7 @@ export default async function handler(req, res) {
         if (data.error) {
             throw new Error(`Google API Error: ${data.error.message}`);
         }
-        if (!data.candidates || !data.candidates[0].content) {
+        if (!data?.candidates?.[0]?.content?.parts?.[0]?.text) { {
             throw new Error("AI ne response block kar diya (Safety Filter Triggered).");
         }
 
@@ -290,23 +289,35 @@ export default async function handler(req, res) {
        // const cleanJson = rawText.replace(/```json|```/g, '').trim();
 
         // 7. Validation (Check karo JSON sahi hai ya nahi)
-        try {
-            const rawText = data.candidates[0].content.parts[0].text;
-            const parsedFiles = JSON.parse(rawText);
-            
-            // ✅ SUCCESS: Clean data bhejo
-            return res.status(200).json({ 
-                success: true, 
-                files: parsedFiles 
-            });
+        // 7. Validation
+try {
+    let rawText = data.candidates[0].content.parts[0].text;
 
-        } catch (jsonError) {
-            console.error("JSON Parse Fail:", data.candidates[0].content.parts[0].text);
-            return res.status(500).json({ 
-                error: "AI generated invalid JSON. Please try again.",
-                raw_response: data.candidates[0].content.parts[0].text
-            });
-        }
+    rawText = rawText
+        .replace(/```json/g, '')
+        .replace(/```/g, '')
+        .trim();
+
+    const jsonMatch = rawText.match(/\[[\s\S]*\]/);
+
+    if (!jsonMatch) {
+        throw new Error("No valid JSON array found");
+    }
+
+    const parsedFiles = JSON.parse(jsonMatch[0]);
+
+    return res.status(200).json({
+        success: true,
+        files: parsedFiles
+    });
+
+} catch (jsonError) {
+    console.error("JSON Parse Fail:", jsonError.message);
+
+    return res.status(500).json({
+        error: "AI generated invalid JSON. Please try again."
+    });
+}
 
     } catch (error) {
         console.error("Server Crash Log:", error.message);
