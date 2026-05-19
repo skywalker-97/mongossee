@@ -162,6 +162,7 @@ export default async function handler(req, res) {
                 - Correct imports/exports based on generated structure
                 - Append "_1413" to the end of source code filenames, right before the file extension (e.g., "App_1413.tsx", "server_1413.js", "Navbar_1413.jsx", "socket_1413.ts")
                 - STRICTLY Do NOT append "_1413" to dependency, configuration, or entry HTML files (must be exactly "package.json", "tsconfig.json", "vite.config.ts", "index.html", ".gitignore")
+                - CRITICAL: Ensure all import/require statements inside the generated code perfectly match the newly appended "_1413" filenames.
                 - Simple task → minimal files
                 - Medium task → modular structure
                 - Complex/full-stack task → properly separated frontend/backend structure
@@ -232,7 +233,7 @@ export default async function handler(req, res) {
                 OUTPUT JSON ONLY.
                 `;
 
-        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+        const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`;
         
         // 4. Advanced Configuration (Ye hai asli Magic ✨)
         const requestBody = {
