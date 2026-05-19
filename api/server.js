@@ -256,8 +256,9 @@ export default async function handler(req, res) {
                         properties: {
                             filename: { type: "STRING" },
                             code: { 
-                                type: "STRING", 
-                                description: "CRITICAL: Full source code. Use ACTUAL newlines (\\n) and 2-space indentation. DO NOT return a single-line string. Every statement must be on a new line." 
+                                type: "STRING",  
+                                description: "Full clean source code as a standard JSON-escaped string. Use escaped characters like \\n for newlines. Ensure no raw unescaped line breaks exist inside the JSON string."
+                                //"CRITICAL: Full source code. Use ACTUAL newlines (\\n) and 2-space indentation. DO NOT return a single-line string. Every statement must be on a new line."
                             }
                         },
                         required: ["filename", "code"]
