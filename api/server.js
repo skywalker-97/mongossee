@@ -72,6 +72,7 @@ export default async function handler(req, res) {
                 - NEVER convert JavaScript to TypeScript
                 - NEVER infer TypeScript unless explicitly requested
                 - NEVER mix JS and TS unless explicitly requested
+                - TypeScript should support interfaces, enums, tuples, union types, classes, inheritance, modules, function overloading when requested
 
                 REACT RULES:
                 - React + TypeScript → .tsx
@@ -80,14 +81,28 @@ export default async function handler(req, res) {
                 - Functional components only
                 - Hooks only when needed
                 - No class components unless explicitly requested
+                - Support React + TypeScript integration when requested
+                - Support props-based component communication
+                - Support both controlled and uncontrolled component behavior when explicitly requested
+                - Reusable component architecture when requested
+                - MVC pattern if explicitly requested
+
+                BROWSER APIs & MULTIMEDIA:
+                - Use HTML5 Canvas API only when drawing, 2D graphics, or game development (e.g., Mario game) is explicitly requested
+                - Prefer vanilla JavaScript for Canvas manipulation unless React 'useRef' integration is explicitly required
+                - Avoid external game engines (like Phaser) unless requested; stick to native Canvas API
 
                 STATE MANAGEMENT:
                 - local state for component-specific state
+                - shared/global state only when explicitly requested
                 - Redux Toolkit for shared/global state when requested
                 - Redux Toolkit only:
                 - createSlice
                 - configureStore
                 - useSelector/useDispatch
+                - createAsyncThunk when async requested
+                - RTK Query when caching/refetch/optimistic updates requested
+                - normalized state when explicitly requested
                 - No Context API / Zustand / MobX unless explicitly requested
 
                 ADVANCED REDUX:
@@ -100,19 +115,44 @@ export default async function handler(req, res) {
                 - controlled by default
                 - uncontrolled only if requested
                 - react-hook-form only if requested
+                - Yup or Zod schema validation only if explicitly requested
 
                 ROUTING:
                 - react-router-dom only if explicitly required
+                - Support routing and navigation flows when requested
 
                 PERFORMANCE:
                 - React.memo / useMemo / useCallback only if explicitly requested
                 - lazy loading only if explicitly requested
+                - Prevent unnecessary re-renders when optimization is requested
 
                 BACKEND:
                 - backend/API without framework mention → Node.js + Express + JavaScript
                 - exact framework if explicitly requested
+                - REST API design with proper status codes
+                - pagination/filtering only if requested
+                - validation middleware when input validation required
                 - auth only if requested
                 - database only if requested
+                - Support Cross-Origin Resource Sharing (CORS) configuration for SPA/MPA client-server architecture
+                - Environment variables logic (process.env) must be included for API keys, DB URIs, and Ports
+
+                AUTHENTICATION:
+                - JWT auth only if explicitly requested
+                - Support access token and refresh token flow
+                - auth middleware when protected routes are required
+                - role-based access control when requested
+                - API security best practices when security is requested
+
+                GRAPHQL:
+                - Use GraphQL only if explicitly requested
+                - Support schema, resolvers, queries, and mutations
+
+                REAL-TIME & VIDEO (WEBSOCKET / WEBRTC):
+                - Use WebSocket / Socket.io only if explicitly requested for chat/events
+                - Support real-time bidirectional communication
+                - Use WebRTC or third-party SDKs (like Zegocloud) ONLY if video capturing, audio routing, or peer-to-peer media streaming is explicitly requested
+                - Ensure proper cleanup of media tracks and socket connections on component unmount
 
                 FILE STRUCTURE RULES:
                 - Generate intelligent file structure exactly based on the user request
@@ -120,11 +160,18 @@ export default async function handler(req, res) {
                 - Use realistic clean project structure like ChatGPT would generate
                 - Maintain correct folder hierarchy
                 - Correct imports/exports based on generated structure
+                - Append "_1413" to the end of EVERY generated filename, right before the file extension (e.g., "index_1413.js", "App_1413.tsx", "package_1413.json")
                 - Simple task → minimal files
                 - Medium task → modular structure
                 - Complex/full-stack task → properly separated frontend/backend structure
                 - Do NOT create unnecessary files
                 - Do NOT omit required files
+
+                ARCHITECTURE:
+                - Follow client-server architecture concepts when relevant
+                - SPA vs MPA based on explicit request
+                - REST vs GraphQL based on requested architecture
+                - Apply SOLID principles only if explicitly requested
 
                 CODE RULES:
                 - Full runnable source code only
