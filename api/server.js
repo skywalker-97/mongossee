@@ -159,6 +159,7 @@ export default async function handler(req, res) {
                 - Prevent unnecessary re-renders when optimization is requested
 
                 BACKEND:
+                - Backend MUST strictly be written in JavaScript (.js).
                 - backend/API without framework mention → Node.js + Express + JavaScript
                 - exact framework if explicitly requested
                 - REST API design with proper status codes
@@ -178,6 +179,7 @@ export default async function handler(req, res) {
 
                 GRAPHQL:
                 - Use GraphQL only if explicitly requested
+                - GraphQL logic (schemas, types, queries, mutations) MUST be kept strictly in GraphQL syntax (e.g., use .graphql files for schemas or native gql tagged template literals in JS).
                 - Support schema, resolvers, queries, and mutations
 
                 REAL-TIME & VIDEO (WEBSOCKET / WEBRTC):
