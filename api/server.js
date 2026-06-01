@@ -109,7 +109,7 @@ export default async function handler(req, res) {
                 REACT RULES:
                 - React + TypeScript → .tsx
                 - React + JavaScript → .jsx
-                - React without language mention → default to .jsx
+                - React without language mention → default to .tsx
                 - Functional components only
                 - Hooks only when needed
                 - No class components unless explicitly requested
