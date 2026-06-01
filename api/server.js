@@ -64,7 +64,7 @@ export default async function handler(req, res) {
                 - Full-stack ONLY if explicitly requested
                 - Logic/algorithm request → return only required code files
                 - UI-related terms imply frontend
-                - Include config files ONLY when required
+                - Include necessary config files. For full-stack and database projects, always separate database connection logic into its own config file.
 
                 LANGUAGE RULES:
                 - JavaScript / JS / .js / .jsx → JavaScript ONLY
