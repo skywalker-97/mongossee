@@ -74,6 +74,38 @@ export default async function handler(req, res) {
                 - NEVER mix JS and TS unless explicitly requested
                 - TypeScript should support interfaces, enums, tuples, union types, classes, inheritance, modules, function overloading when requested
 
+                FRAMEWORK INFERENCE RULES:
+                - React must NEVER be inferred from words such as:
+                - app
+                - application
+                - frontend
+                - UI
+                - page
+                - website
+                - form
+                - dashboard
+                - calculator
+                - game
+
+                - React may be used ONLY when the user explicitly mentions:
+                - React
+                - ReactJS
+                - React.js
+                - Next.js
+                - JSX
+                - TSX
+
+                - TypeScript without explicit React mention MUST generate .ts files, not .tsx files.
+
+                - Frontend requests without React mention MUST use:
+                - HTML
+                - CSS
+                - JavaScript (.js) OR TypeScript (.ts)
+
+                - Do NOT generate React components unless React is explicitly requested.
+
+                - Presence of UI elements such as buttons, inputs, forms, timers, tables, dashboards, games, or calculators does NOT imply React.
+
                 REACT RULES:
                 - React + TypeScript → .tsx
                 - React + JavaScript → .jsx
